@@ -6,6 +6,7 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 
+
 object partie1 {
 
   def main(args: Array[String]): Unit = {
@@ -75,14 +76,15 @@ object partie1 {
     val df10 = df9.union(df5)
     val df_final = df10.union(df6)
 
-    df_final.show(48)
+    //df_final.show(48)
 
 
 
     //Question 2 : Rajouter une colonne contenant la date du fichier duquel vient chacune des lignes (y'a une fonction dans Spark qui vous le récupère depuis le nom du fichier directement, c'est cadeau).
+    sparkSession.udf.register(name = "get_file_name", (path: String) => path.split("/").last.split("\\.").head)
+    val df_add_col = df_final.withColumn(colName = "file_date", callUDF(udfName = "get_file_name", input_file_name))
+    df_add_col.show()
 
-    val df_new_col = df_final.withColumn("files_date",lit("null"))
-    df_new_col.show()
 
 
 
