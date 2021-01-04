@@ -2,6 +2,8 @@ package com.josephStoschek
 
 import java.nio.file.FileSystem
 
+import java.text.SimpleDateFormat
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
@@ -83,15 +85,15 @@ object partie1 {
     //Question 2 : Rajouter une colonne contenant la date du fichier duquel vient chacune des lignes (y'a une fonction dans Spark qui vous le récupère depuis le nom du fichier directement, c'est cadeau).
     sparkSession.udf.register(name = "get_file_name", (path: String) => path.split("/").last.split("\\.").head)
     val df_add_col = df_final.withColumn(colName = "file_date", callUDF(udfName = "get_file_name", input_file_name))
-    df_add_col.show()
+    //df_add_col.show()
 
 
     //Question 3 :Remplir les gaps comme décrit précédemment.
 
     // Question 4 : Écrire les résultats en partitionnant par date (la colonne que nous avons rajouté dans la question 2.)
 
-    df_add_col.write.partitionBy(("file_date").mode(SaveMode.Overwrite).parquet("result"))
-    val parquetDF = sparkSession.read.parquet("result")
+    df_add_col.write.partitionBy("file_date").mode(SaveMode.Overwrite).parquet("resultat")
+    val parquetDF = sparkSession.read.parquet("resultat")
     parquetDF.show()
 
     }
