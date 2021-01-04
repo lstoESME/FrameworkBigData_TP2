@@ -7,8 +7,6 @@ import java.text.SimpleDateFormat
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
-
-
 object partie1 {
 
   def main(args: Array[String]): Unit = {
@@ -18,12 +16,12 @@ object partie1 {
     import org.apache.spark.sql.functions._
 
     // Question 1 : Lire tous ces fichiers sous forme d'un `seul` Dataframe (ou d'un Dataset, au choix).
-    /*val df:DataFrame = sparkSession.read.option("header", false).option("delimiter", ";").option("inferSchema", true).csv("C:\\Users\\stosc\\Documents\\ESME\\Ingé3_2020-2021\\FrameworkBigData\\TP2_note\\src\\main\\scala\\com\\josephStoschek\\data\\*.csv")
-
-    val df_rename = df.withColumnRenamed("_c0", "dataframe")
-    df_rename.show(30)*/
+    /* Métode rapide pour lire tous les fichiers en une dataframe.
+    val df:DataFrame = sparkSession.read.option("header", false).option("delimiter", ",").option("inferSchema", true).csv("C:\\Users\\stosc\\Documents\\ESME\\Ingé3_2020-2021\\FrameworkBigData\\TP2_note\\src\\main\\scala\\com\\josephStoschek\\data\\*.csv")
+    */
 
     import sparkSession.implicits._
+    /* Méthode longue pour lire tous les fichier en une dataframe avec traitement des valeurs manquantes.*/
     var df1: DataFrame = sparkSession.read.option("header", false).option("delimiter", ",").option("inferSchema", true).csv("C:\\Users\\stosc\\Documents\\ESME\\Ingé3_2020-2021\\FrameworkBigData\\TP2_note\\src\\main\\scala\\com\\josephStoschek\\data\\02112020.csv")
     var df1_count = df1.count()
     while (df1_count <8) {
@@ -82,6 +80,7 @@ object partie1 {
     val col_c1_rename = col_c0_rename.withColumnRenamed("_c1", "base_currency")
     val col_c2_rename = col_c1_rename.withColumnRenamed("_c2", "note_film")
     val df_final = col_c2_rename.withColumnRenamed("_c3", "exchange_rate")
+
     println("Question 1 :")
     df_final.show(48)
 
@@ -90,6 +89,7 @@ object partie1 {
     //Question 2 : Rajouter une colonne contenant la date du fichier duquel vient chacune des lignes (y'a une fonction dans Spark qui vous le récupère depuis le nom du fichier directement, c'est cadeau).
     sparkSession.udf.register(name = "get_file_name", (path: String) => path.split("/").last.split("\\.").head)
     val df_add_col = df_final.withColumn(colName = "file_date", callUDF(udfName = "get_file_name", input_file_name))
+
     println("Question 2 :")
     df_add_col.show()
 
@@ -98,10 +98,10 @@ object partie1 {
 
     // Question 4 : Écrire les résultats en partitionnant par date (la colonne que nous avons rajouté dans la question 2.)
 
-    println("Question 4 :")
     df_add_col.write.partitionBy("file_date").mode(SaveMode.Overwrite).parquet("resultat")
     val parquetDF = sparkSession.read.parquet("resultat")
-    //parquetDF.show()
+    println("Question 4 :")
+    parquetDF.show()
 
     }
 
