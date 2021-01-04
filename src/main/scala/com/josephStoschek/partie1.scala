@@ -81,12 +81,12 @@ object partie1 {
 
     //Question 2 : Rajouter une colonne contenant la date du fichier duquel vient chacune des lignes (y'a une fonction dans Spark qui vous le récupère depuis le nom du fichier directement, c'est cadeau).
 
+    val df_new_col = df_final.withColumn("files_date",lit("null"))
+    df_new_col.show()
+
+
 
     }
-
-
-
-    /* */
 
 
 }
