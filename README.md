@@ -1,2 +1,2 @@
 "# FrameworkBigData_TP2"
-"# Louise STOSCHEK"
+"# Caitlin Joseph & Louise STOSCHEK"
