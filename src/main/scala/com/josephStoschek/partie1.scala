@@ -3,7 +3,7 @@ package com.josephStoschek
 import java.nio.file.FileSystem
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 
 
@@ -86,7 +86,13 @@ object partie1 {
     df_add_col.show()
 
 
+    //Question 3 :Remplir les gaps comme décrit précédemment.
 
+    // Question 4 : Écrire les résultats en partitionnant par date (la colonne que nous avons rajouté dans la question 2.)
+
+    df_add_col.write.partitionBy(("file_date").mode(SaveMode.Overwrite).parquet("result"))
+    val parquetDF = sparkSession.read.parquet("result")
+    parquetDF.show()
 
     }
 
